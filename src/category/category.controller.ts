@@ -1,67 +1,48 @@
 import {
-  Request,
+  Body,
   Controller,
   Get,
-  Post,
-  Body,
-  Patch,
   Param,
-  Delete,
+  Post,
+  Put,
+  ParseIntPipe,
   UseGuards,
+  Delete,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
+import { Prisma, Role } from '@prisma/client';
+import { CategoryDto } from './category.dto';
 import { RolesGuard } from '../auth/roles/role.guard';
 import { Roles } from '../auth/roles/role.decorator';
-import { Role } from '.prisma/client';
-import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from 'src/auth/jwt/jwt-auth.guard';
 
-
-@Controller('category')
+@Controller()
+//@UseGuards(AuthGuard('local'), RolesGuard, JwtAuthGuard)
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
-  @Get()
-  //@Roles(ERole.ADMIN) // กำหนดสิทธิ์ที่จำเป็น
-  @UseGuards(RolesGuard) // เพิ่มการใช้งาน RoleGuard
+  // เพิ่มการใช้งาน RoleGuard และ JwtAuthGuard
+  @Post('/category/create')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN) // กำหนดสิทธิ์ที่จำเป็น
-  @Get('admin')
-  findAllAdmin() {
-    // ...
-    return 'admin';
-  }
-  @UseGuards(AuthGuard('local'), RolesGuard)
-  @Roles(Role.ADMIN)
-  @Get('admin')
-  async login(@Request() req) {
-    // after successful login, Passport will automatically add user to req
-    return 'you did it!';
-    // ...
+  async create(@Body() categoryDto: CategoryDto) {
+    return this.categoryService.createCategory(categoryDto);
   }
 
-  @Post()
-  create(@Body() createCategoryDto: CreateCategoryDto) {
-    return this.categoryService.create(createCategoryDto);
+  // เอาข้อมูลจาก category มาแสดงทั้งหมด
+  @Get('/categories')
+  async findAll() {
+    return this.categoryService.findAllCategories();
   }
 
-  @Get()
-  findAll() {
-    return this.categoryService.findAll();
+  // เอาข้อมูลจาก categoryid มาเพื่ออัพเดตข้อมูล
+  @Put('/category/:id')
+  async update(@Param('id', ParseIntPipe) id: number, @Body() data: any) {
+    return this.categoryService.updateCategory(id, data);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.categoryService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
-    return this.categoryService.update(+id, updateCategoryDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.categoryService.remove(+id);
+  @Delete('/category/:id')
+  async delete(@Param('id', ParseIntPipe) id: number) {
+    return this.categoryService.deleteCategory(id);
   }
 }

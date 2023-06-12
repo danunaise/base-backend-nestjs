@@ -6,6 +6,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   // Enable Passport middleware
   app.use(passport.initialize());
+  app.enableCors();
   await app.listen(5500);
 }
 bootstrap();

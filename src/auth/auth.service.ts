@@ -21,7 +21,6 @@ export class AuthService {
     }
 
     return null;
-    
   }
 
   async login(user: any) {

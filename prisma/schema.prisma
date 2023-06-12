@@ -21,8 +21,8 @@ model User {
 }
 
 enum Role {
-  ADMIN
   USER
+  ADMIN
 }
 
 model Roles {
@@ -38,4 +38,36 @@ model UserRole {
   roleId Int
   userId Int
   @@unique([roleId, userId])
+}
+
+//หมวดหมู่
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  description String
+  image       String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+}
+//สินค้า
+model Product {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  description String
+  image       String
+  price       Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  categoryId  Int
+  category    Category  @relation(fields: [categoryId], references: [id])
+  stock       Stock[]
+}
+
+//สต๊อกสินค้า
+model Stock {
+  id         Int      @id @default(autoincrement())
+  items      String
+  productId  Int
+  product    Product  @relation(fields: [productId], references: [id])
 }

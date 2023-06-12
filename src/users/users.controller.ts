@@ -3,7 +3,6 @@ import { AuthService } from 'src/auth/auth.service';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt-auth.guard';
 import { LocalAuthGuard } from 'src/auth/local/local-auth.guard';
 import { UsersService } from './users.service';
-//import { Prisma, Role } from '@prisma/client';
 
 @Controller('users')
 export class UsersController {

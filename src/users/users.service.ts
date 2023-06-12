@@ -35,7 +35,7 @@ export class UsersService {
         },
       },
     });
-    return user;
+    return { message: 'User created', user };
   }
 
   async findUserInfo(username: string) {
