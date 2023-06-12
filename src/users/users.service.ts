@@ -2,7 +2,7 @@ import { Injectable, Body } from '@nestjs/common';
 import { userDto } from './user.dto';
 import { PrismaService } from 'prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { Role } from '@prisma/client';
+import { RoleName } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
@@ -16,23 +16,15 @@ export class UsersService {
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     // find the "user" role
-    const userRole = await this.prisma.roles.findUnique({
-      where: { name: Role.USER },
+    const userRole = await this.prisma.role.findUnique({
+      where: { name: RoleName.USER },
     });
     // create the new user with the "user" role
     const user = await this.prisma.user.create({
       data: {
         username,
         password: hashedPassword,
-        roles: {
-          create: {
-            role: {
-              connect: {
-                id: userRole.id,
-              },
-            },
-          },
-        },
+        roleId: userRole.id,
       },
     });
     return { message: 'User created', user };

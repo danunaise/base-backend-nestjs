@@ -4,7 +4,7 @@ import { UsersModule } from './users/users.module';
 import { CategoryModule } from './category/category.module';
 import { PassportModule } from '@nestjs/passport';
 import { PrismaService } from 'prisma/prisma.service';
-import { Role } from '@prisma/client';
+import { Role, RoleName } from '@prisma/client';
 
 @Module({
   imports: [AuthModule, UsersModule, CategoryModule, PassportModule],
@@ -15,24 +15,24 @@ export class AppModule implements OnModuleInit {
 
   async onModuleInit() {
     // check if "USER" role exists
-    let role = await this.prisma.roles.findUnique({
-      where: { name: Role.USER },
+    let role = await this.prisma.role.findUnique({
+      where: { name: RoleName.USER },
     });
 
     // if not, create it
     if (!role) {
-      role = await this.prisma.roles.create({
-        data: { name: Role.USER },
+      role = await this.prisma.role.create({
+        data: { name: RoleName.USER },
       });
     }
 
     // same for "ADMIN" role
-    role = await this.prisma.roles.findUnique({
-      where: { name: Role.ADMIN },
+    role = await this.prisma.role.findUnique({
+      where: { name: RoleName.ADMIN },
     });
     if (!role) {
-      role = await this.prisma.roles.create({
-        data: { name: Role.ADMIN },
+      role = await this.prisma.role.create({
+        data: { name: RoleName.ADMIN },
       });
     }
   }

@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
-import { Role } from '@prisma/client';
+import { RoleName } from '@prisma/client';
 
 @Injectable()
 export class RoleService implements OnModuleInit {
@@ -9,23 +9,23 @@ export class RoleService implements OnModuleInit {
   async onModuleInit() {
     // check if "admin" role exists
     let role = await this.prisma.roles.findUnique({
-      where: { name: Role.ADMIN },
+      where: { name: RoleName.ADMIN },
     });
 
     // if not, create it
     if (!role) {
       role = await this.prisma.roles.create({
-        data: { name: Role.ADMIN },
+        data: { name: RoleName.ADMIN },
       });
     }
 
     // same for "user" role
     role = await this.prisma.roles.findUnique({
-      where: { name: Role.USER },
+      where: { name: RoleName.USER },
     });
     if (!role) {
       role = await this.prisma.roles.create({
-        data: { name: Role.USER },
+        data: { name: RoleName.USER },
       });
     }
   }

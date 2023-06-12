@@ -6,8 +6,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { PrismaService } from 'prisma/prisma.service';
-import { User } from '.prisma/client';
-import { Role } from '.prisma/client';
+import { RoleName } from '.prisma/client';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -17,32 +16,43 @@ export class RolesGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const roles = this.reflector.get<Role[]>('roles', context.getHandler());
+    const roles = this.reflector.get<RoleName[]>('roles', context.getHandler());
 
     if (!roles) {
       return true;
     }
-    const request = context.switchToHttp().getRequest();
-    const user: User = request.user;
 
-    const userRoles = await this.prisma.userRole.findMany({
+    const request = context.switchToHttp().getRequest();
+    const user = request.user;
+    console.log('User:', user);
+
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    const userRoles = await this.prisma.user.findUnique({
       where: {
-        userId: user.id,
+        id: user.userId,
       },
       include: {
         role: true,
       },
     });
-    const userRolesNames = userRoles.map((userRole) => userRole.role.name);
 
-    const hasRole = () => roles.some((role) => userRolesNames.includes(role));
+    const userRoleNames = userRoles.role.name;
 
-    if (!user || !userRolesNames || !hasRole()) {
+    const hasRole = () => roles.some((role) => userRoleNames.includes(role));
+
+    if (!hasRole()) {
+      console.log('User:', user);
+      console.log('Roles Req:', roles);
+      console.log('User Roles:', userRoleNames);
       throw new UnauthorizedException();
     }
+
     console.log('User:', user);
     console.log('Roles:', roles);
-    console.log('User Roles:', userRolesNames);
+    console.log('User Roles:', userRoleNames);
     return true;
   }
 }
