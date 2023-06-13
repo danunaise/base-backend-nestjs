@@ -35,7 +35,7 @@ model Role {
 //หมวดหมู่
 model Category {
   id          Int       @id @default(autoincrement())
-  name        String    
+  name        String    @unique
   description String
   image       String
   createdAt   DateTime  @default(now())
@@ -45,7 +45,7 @@ model Category {
 //สินค้า
 model Product {
   id          Int       @id @default(autoincrement())
-  name        String    
+  name        String    @unique
   description String
   image       String
   price       Int

@@ -49,7 +49,7 @@ export class RolesGuard implements CanActivate {
       console.log('User Roles:', userRoleNames);
       throw new UnauthorizedException();
     }
-
+    //debug
     console.log('User:', user);
     console.log('Roles:', roles);
     console.log('User Roles:', userRoleNames);

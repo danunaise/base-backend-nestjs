@@ -5,9 +5,10 @@ import { CategoryModule } from './category/category.module';
 import { PassportModule } from '@nestjs/passport';
 import { PrismaService } from 'prisma/prisma.service';
 import { Role, RoleName } from '@prisma/client';
+import { ProductsModule } from './products/products.module';
 
 @Module({
-  imports: [AuthModule, UsersModule, CategoryModule, PassportModule],
+  imports: [AuthModule, UsersModule, CategoryModule, PassportModule, ProductsModule],
   providers: [PrismaService],
 })
 export class AppModule implements OnModuleInit {

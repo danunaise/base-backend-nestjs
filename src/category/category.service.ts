@@ -9,6 +9,12 @@ export class CategoryService {
 
   async createCategory(@Body() dto: CategoryDto) {
     const { name, description, image } = dto;
+    const found = await this.prisma.category.findUnique({
+      where: { name },
+    });
+    if (found) {
+      return { message: 'Category already exists' };
+    }
     const category = await this.prisma.category.create({
       data: {
         name,
