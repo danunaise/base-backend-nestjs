@@ -30,13 +30,60 @@ export class ProductsService {
   }
 
   async getAllProducts() {
-    const products = await this.prisma.product.findMany({
+    const products = await this.prisma.product.findMany({});
+
+    const productsWithCounts = await Promise.all(
+      products.map(async (product) => {
+        const count = await this.countProductsInCategory(product.id);
+        return { ...product, count };
+      }),
+    );
+
+    return productsWithCounts;
+  }
+
+  async countProductsInCategory(productId) {
+    const count = await this.prisma.stock.count({
+      where: {
+        productId: productId,
+      },
+    });
+    return count;
+  }
+
+  async getProductById(id: number) {
+    const product = await this.prisma.product.findUnique({
+      where: { id },
       include: {
         category: true,
       },
     });
 
-    return products;
+    return product;
+  }
+
+  async getProductsByCategory(categoryId) {
+    const products = await this.prisma.product.findMany({
+      where: { categoryId: categoryId },
+    });
+
+    const productsWithCounts = await Promise.all(
+      products.map(async (product) => {
+        const count = await this.countStockByProduct(product.id);
+        return { ...product, count };
+      }),
+    );
+
+    return productsWithCounts;
+  }
+
+  async countStockByProduct(productId) {
+    const count = await this.prisma.stock.count({
+      where: {
+        productId: productId,
+      },
+    });
+    return count;
   }
 
   async updateProduct(id: number, data: any) {

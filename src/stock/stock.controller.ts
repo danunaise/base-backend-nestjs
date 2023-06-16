@@ -27,6 +27,19 @@ export class StockController {
     return this.stockService.getAllStock();
   }
 
+  @Get('product/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RoleName.ADMIN)
+  async findByProduct(@Param('id', ParseIntPipe) id: number) {
+    return this.stockService.getStockByProduct(id);
+  }
+
+  // ดึงจำนวณสินค้าใน stock ของสินค้าที่ระบุ :id = product idที่ต้องการ
+  @Get('product/:id/quantity')
+  async findQuantityByProduct(@Param('id', ParseIntPipe) id: number) {
+    return this.stockService.getStockQuantityByProduct(id);
+  }
+
   @Post('add')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RoleName.ADMIN)

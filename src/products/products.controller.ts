@@ -32,6 +32,22 @@ export class ProductsController {
     return this.productsService.getAllProducts();
   }
 
+  @Get(':id')
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.productsService.getProductById(id);
+  }
+
+  @Get('category/:id')
+  async findByCategory(@Param('id', ParseIntPipe) id: number) {
+    return this.productsService.getProductsByCategory(id);
+  }
+
+  // ดึงจำนวณสินค้าใน stock ของสินค้าที่ระบุ :id = product idที่ต้องการ
+  // @Get('/:id/quantity')
+  // async findQuantityByProduct(@Param('id', ParseIntPipe) id: number) {
+  //   return this.productsService.getStockQuantityByProduct(id);
+  // }
+
   @Put('edit/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RoleName.ADMIN)

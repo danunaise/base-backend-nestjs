@@ -31,6 +31,31 @@ export class StockService {
     return stock;
   }
 
+  async getStockByProduct(id: number) {
+    const count = await this.prisma.stock.count({
+      where: {
+        productId: id,
+      },
+    });
+
+    const stock = await this.prisma.stock.findMany({
+      where: {
+        productId: id,
+      },
+    });
+    return { count, stock };
+  }
+
+  async getStockQuantityByProduct(id: number) {
+    const count = await this.prisma.stock.count({
+      where: {
+        productId: id,
+      },
+    });
+
+    return { count };
+  }
+
   //update stock
   async updateStock(id: number, data: any) {
     const found = await this.prisma.stock.findUnique({

@@ -35,6 +35,16 @@ export class CategoryController {
     return this.categoryService.findAllCategories();
   }
 
+  @Get(':id')
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.categoryService.findCategoryById(id);
+  }
+
+  @Get('pid/:id')
+  async findProductByCategory(@Param('id', ParseIntPipe) id: number) {
+    return this.categoryService.findProductByCategory(id);
+  }
+
   // เอาข้อมูลจาก categoryid มาเพื่ออัพเดตข้อมูล
   @Put(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)

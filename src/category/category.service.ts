@@ -1,5 +1,5 @@
 import { Injectable, Body } from '@nestjs/common';
-import { Category, Prisma } from '@prisma/client';
+//import { Category, Prisma } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
 import { CategoryDto } from './category.dto';
 
@@ -25,8 +25,43 @@ export class CategoryService {
     return { message: 'Category created', category };
   }
 
-  findAllCategories() {
-    return this.prisma.category.findMany();
+  async findAllCategories() {
+    // ขอข้อมูล categories ทั้งหมด
+    const categories = await this.prisma.category.findMany();
+
+    // ทำการ map ผ่านแต่ละ category เพื่อนับจำนวน products
+    const categoriesWithCounts = await Promise.all(
+      categories.map(async (category) => {
+        const count = await this.countProductsInCategory(category.id);
+        // เพิ่ม count ให้กับ category และส่งกลับ
+        return { ...category, count };
+      }),
+    );
+
+    return categoriesWithCounts;
+  }
+
+  async countProductsInCategory(categoryId) {
+    const count = await this.prisma.product.count({
+      where: {
+        categoryId: categoryId,
+      },
+    });
+    return count;
+  }
+
+  findCategoryById(id: number) {
+    return this.prisma.category.findUnique({
+      where: { id },
+    });
+  }
+  findProductByCategory(id: number) {
+    return this.prisma.category.findUnique({
+      where: { id },
+      include: {
+        products: true,
+      },
+    });
   }
 
   async updateCategory(id: number, data: any) {
