@@ -1,6 +1,6 @@
-Backend Nestjs For Website Shop
+# Backend Nestjs For Website Shop #
 
-Useing
+Using
 - Nest.js
 - Json Web Token (JWT)
 - Passport.js
@@ -11,4 +11,10 @@ Useing
 *Database*
 - PostgresSQL
 
-  
+Authentication (Encrpt By Bcrypt) 
+- signup
+- signin
+
+Authorization (JWT, Role)
+- Role Base (Admin, User)
+- Protect Route
